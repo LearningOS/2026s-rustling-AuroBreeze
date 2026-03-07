@@ -1,0 +1,1 @@
+Filter<std::slice::Iter<'_, &str>, for<'a> fn(&'a str) -> String {capitalize_first}>
