@@ -7,11 +7,11 @@
 // Execute `rustlings hint errors3` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
 
 use std::num::ParseIntError;
+use std::error::Error;
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>>{
     let mut tokens = 100;
     let pretend_user_input = "8";
 
@@ -19,9 +19,11 @@ fn main() {
 
     if cost > tokens {
         println!("You can't afford that many!");
+        Err("You can't afford that many!".into())
     } else {
         tokens -= cost;
         println!("You now have {} tokens.", tokens);
+        Ok(())
     }
 }
 
