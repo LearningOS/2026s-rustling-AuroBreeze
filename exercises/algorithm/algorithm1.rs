@@ -2,7 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -70,13 +69,52 @@ impl<T> LinkedList<T> {
         }
     }
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+        where T: PartialOrd
 	{
 		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+        let mut list_n = Self::new();
+        list_n.length = list_a.length + list_b.length;
+
+        let mut ptr_a = list_a.start;
+        let mut ptr_b = list_b.start;
+
+        let mut ptr_n = list_n.start;
+        while let (Some(a),Some(b)) = (ptr_a,ptr_b) {
+            unsafe {
+                let node_to_add;
+                if (*ptr_a.expect("node_a is none").as_ptr()).val <= (*ptr_b.expect("node_b is none").as_ptr()).val{
+                    node_to_add = a;
+                    ptr_a = (*ptr_a.expect("node_a is none").as_ptr()).next;
+                }else{
+                    node_to_add = b;
+                    ptr_b = (*ptr_b.expect("node_b is none").as_ptr()).next;
+                }
+
+                (*node_to_add.as_ptr()).next = None;
+
+                match list_n.end {
+                    None => list_n.start = Some(node_to_add), // first node
+                    Some(end) => (*end.as_ptr()).next = Some(node_to_add),
+                }
+
+                list_n.end = Some(node_to_add);
+            }
         }
+
+        let remaining_start = if ptr_a.is_some() {ptr_a} else {ptr_b};
+        let reamining_end = if ptr_a.is_some() {list_a.end} else {list_b.end};
+
+        if let Some(start) = remaining_start {
+            unsafe {
+                match list_n.end {
+                    None => list_n.start = Some(start),
+                    Some(end) => (*end.as_ptr()).next = Some(start),
+                }
+
+                list_n.end = reamining_end;
+            }
+        }
+		list_n
 	}
 }
 
